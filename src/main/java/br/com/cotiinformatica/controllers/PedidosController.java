@@ -1,32 +1,42 @@
 package br.com.cotiinformatica.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.cotiinformatica.domain.models.PedidoRequestModel;
+import br.com.cotiinformatica.domain.models.PedidoResponseModel;
+import br.com.cotiinformatica.domain.services.interfaces.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
+@RequiredArgsConstructor
 @Tag(
 	name = "Controle de Pedidos",
 	description = "Serviços para gerenciamento de solicitações de pedidos."
 )
 public class PedidosController {
+	
+	private final PedidoService pedidoService;
 
 	@Operation(
 		summary = "Cadastro de solicitações de pedido",
 		description = "Cria uma nova solicitação de pedido no sistema."
 	)
 	@PostMapping
-	public ResponseEntity<?> post() {
-		// TODO implementar o cadastro do pedido
-		return ResponseEntity.ok().build();
+	public ResponseEntity<PedidoResponseModel> post(@RequestBody @Valid PedidoRequestModel model) {
+		var response = pedidoService.criarPedido(model);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	@Operation(

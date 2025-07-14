@@ -51,7 +51,7 @@ public class Pedido {
 	private String descricaoPedido;
 	
 	@Column(name = "ativo", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-	private Boolean ativo;
+	private Boolean ativo = true;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
