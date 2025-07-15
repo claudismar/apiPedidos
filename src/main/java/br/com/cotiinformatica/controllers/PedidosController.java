@@ -1,13 +1,19 @@
 package br.com.cotiinformatica.controllers;
 
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.cotiinformatica.domain.models.PedidoRequestModel;
@@ -43,20 +49,20 @@ public class PedidosController {
 		summary = "Atualização de pedido",
 		description = "Modifica uma solicitação de pedido no sistema."
 	)
-	@PutMapping
-	public ResponseEntity<?> put() {
-		// TODO implementar a atualização o pedido
-		return ResponseEntity.ok().build();
+	@PutMapping("{id}")
+	public ResponseEntity<PedidoResponseModel> put(@PathVariable UUID id, @RequestBody @Valid PedidoRequestModel model) {
+		var response = pedidoService.alterarPedido(id, model);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
 	@Operation(
 		summary = "Inativação de solicitações de pedido",
 		description = "Inativa uma nova solicitação de pedido existente no sistema."
 	)
-	@DeleteMapping
-	public ResponseEntity<?> delete() {
-		// TODO implementar a exclusão do pedido
-		return ResponseEntity.ok().build();
+	@DeleteMapping("{id}")
+	public ResponseEntity<PedidoResponseModel> delete(@PathVariable UUID id) {
+		var response = pedidoService.inativarPedido(id);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
 	@Operation(
@@ -64,10 +70,22 @@ public class PedidosController {
 		description = "Retorna uma consulta paginada de solicitações de pedido no sistema."
 	)
 	@GetMapping
-	public ResponseEntity<?> get() {
-		// TODO implementar a consulta do pedido
-		return ResponseEntity.ok().build();
+	public ResponseEntity<Page<PedidoResponseModel>> getAll(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "25") int size
+	) {
+		var pageable = PageRequest.of(page, size);
+		var response = pedidoService.consultarPedidos(pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-
+	@Operation(
+			summary = "Consulta de solicitação de pedido por ID.",
+			description = "Retorna um pedido no sistema através do ID informado."
+		)
+	@GetMapping("{id}")
+	public ResponseEntity<PedidoResponseModel> getById(@PathVariable UUID id) {
+		var response = pedidoService.obterPedidoPorId(id);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
 }
