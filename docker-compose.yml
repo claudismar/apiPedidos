@@ -13,6 +13,8 @@ services:
        - rabbitmq # Nome do serviço que precisamos aguardar para executar a API
    environment:
        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pedidosdb # aqui nao usa o endereço, mas o nome do serviço (no caso postgres)
+       SPRING_RABBITMQ_HOST: rabbitmq
+
  postgres: # Nome do serviço
    image: postgres:16 # Imagem oficial do postgresql versão 16
    container_name: postgres-apiPedidos # Nome do container
@@ -27,6 +29,7 @@ services:
      - apiPedidos-network # Nome da rede compartilhada
    volumes:
      - postgres-data:/var/lib/postgresql/data # Local para armazenar os dados dentro do container
+
  rabbitmq: # Nome do serviço
    image: rabbitmq:3-management # Imagem oficial do rabbitmq 3
    container_name: rabbitmq-apiPedidos # Nome do container
@@ -39,8 +42,10 @@ services:
      - "15672:15672"   # Porta do painel de administração (UI)
    networks:
      - apiPedidos-network # Nome da rede compartilhada
+
 networks:
  apiPedidos-network: # Nome da rede
    driver: bridge # Rede compartilhada
+
 volumes:
  postgres-data: #Registrando o local para armazenamento dos dados
