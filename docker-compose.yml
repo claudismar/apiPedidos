@@ -45,7 +45,8 @@ services:
 
 networks:
  apiPedidos-network: # Nome da rede
-   driver: bridge # Rede compartilhada
+#   driver: bridge # Rede compartilhada
+   external: true # Rede pública para poder ser acessada pelos outros containers do docker
 
 volumes:
  postgres-data: #Registrando o local para armazenamento dos dados

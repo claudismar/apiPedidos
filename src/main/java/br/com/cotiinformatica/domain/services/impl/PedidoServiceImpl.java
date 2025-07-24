@@ -39,21 +39,21 @@ public class PedidoServiceImpl implements PedidoService {
 		var pedido = mapper.map(model, Pedido.class);
 		
 		// Salvando o pedido no banco de dados
-		pedidoRepository.save(pedido);
+		var pedidoCriado = pedidoRepository.save(pedido);
 		
 		// Criação um evento "PedidoCriado" com os dados do pedido
 		var event = new PedidoCriadoEvent(
-				pedido.getId(), 
-				pedido.getDataPedido(), 
-				pedido.getValorPedido(),
-				pedido.getNomeCliente(),
-				pedido.getDescricaoPedido(), 
-				pedido.getStatusPedido().name());
+				pedidoCriado.getId(), 
+				pedidoCriado.getDataPedido(), 
+				pedidoCriado.getValorPedido(),
+				pedidoCriado.getNomeCliente(),
+				pedidoCriado.getDescricaoPedido(), 
+				pedidoCriado.getStatusPedido().name());
 		
 		// Criando um registro para a tabela de saída (OutboxMessage)
 		var message = new OutboxMessage();
 		message.setAggregateType("Pedido");
-		message.setAggregateId(pedido.getId().toString());
+		message.setAggregateId(pedidoCriado.getId().toString());
 		message.setType("PedidoCriado");
 
 		try {
@@ -67,7 +67,7 @@ public class PedidoServiceImpl implements PedidoService {
 		outboxMessageRepository.save(message);
 		
 		// Retornando os dados do pedido cadastrado
-		return mapper.map(pedido, PedidoResponseModel.class);
+		return mapper.map(pedidoCriado, PedidoResponseModel.class);
 	}
 
 	@Override
